@@ -1,35 +1,57 @@
-<<<<<<< HEAD
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Receipt {
 
-    //CREATE VARIABLE 
+    // CREATE VARIABLES 
     private boolean isVeg;
     private boolean isPremium;
+    private String pizzaName;
+    private String pizzaSize; 
+    private int quantity;
     private String topping = "No toppings";
     private double discountApplied = 0.0;
     private String couponCode = "None";
     private double costBeforeDiscount;
 
     // CONSTRUCTOR FOR ACCESSING PRIVATE VARIABLES
-    public Receipt(boolean isVeg, boolean isPremium) {
-        this.isVeg = isVeg; //DIFF. WITH PRIVATE VARIABLES AND PUBLIC BCOZ USE OF SAME VARIABLE
+    public Receipt(boolean isVeg, boolean isPremium, String pizzaName, String pizzaSize, int quantity) {
+        this.isVeg = isVeg;
         this.isPremium = isPremium;
+        this.pizzaName = pizzaName;
+        this.pizzaSize = pizzaSize; 
+        this.quantity = quantity;
     }
 
     // METHOD TO ADD BASE COST
     public double getCost() {
         double cost = 0;
+
+        // COST FOR PIZZA TYPE
         if (isVeg) {
-            cost += 250;
+            cost += 250; 
         } else {
-            cost += 300;
+            cost += 300; 
         }
+
+        // ADDITIONAL COST FOR PREMIUM
         if (isPremium) {
-            cost += 100;
+            cost += 100; 
         }
-        return cost;
+
+        //ADDITIONAL COST UPON PIZZA SIZE
+        if (pizzaSize.equalsIgnoreCase("Small")) {
+            cost += 0; 
+        } 
+        else if (pizzaSize.equalsIgnoreCase("Medium")) {
+            cost += 50; 
+        } 
+        else if (pizzaSize.equalsIgnoreCase("Large")) {
+            cost += 100; 
+        }
+        return cost * quantity;  //MULTIPLE BY QUANTITY
     }
 
     // METHOD TO ADD TOPPINGS
@@ -49,33 +71,102 @@ public class Receipt {
 
     // METHOD TO ADD TAX
     public double addTax(double cost) {
-        return cost + cost * 0.05;
+        return cost + cost * 0.05; // Adding 5% tax
     }
 
     // METHOD TO ADD DISCOUNT
     public double addDiscount(double cost, double discount) {
-        discountApplied = discount;
-        return cost - (cost * discount);
+        discountApplied = discount; 
+        return cost - (cost * discount); 
     }
 
     // FUNCTION TO PRINT THE RECEIPT WITH DETAILS
     public void printReceipt(double finalCost) {
-        System.out.println("\n****** Receipt ******");
-        System.out.println("\nPizza Type: " + (isVeg ? "Veg" : "Non-Veg"));
-        System.out.println("Premium: " + (isPremium ? "Yes" : "No"));
-        System.out.println("Toppings: " + topping);
-        System.out.println("Discount Coupon: " + couponCode);
-        System.out.println("Discount Applied: " + (discountApplied * 100) + "%");
-        System.out.println("Cost before discount: " + costBeforeDiscount);
-        System.out.println("Total cost including tax: " + finalCost);
-        System.out.println("\n****** Thank You! Visit Again ******");
+        String receiptDetails = "\n****** Pizza Shop Receipt ******\n" +
+                "\nPizza Name: " + pizzaName + "\n" +
+                "Pizza Size: " + pizzaSize + "\n" +
+                "Quantity: " + quantity + "\n" +
+                "Pizza Type: " + (isVeg ? "Veg" : "Non-Veg") + "\n" +
+                "Premium: " + (isPremium ? "Yes" : "No") + "\n" +
+                "Toppings: " + topping + "\n" +
+                "Discount Coupon: " + couponCode + "\n" +
+                "Discount Applied: " + (discountApplied * 100) + "%\n" +
+                "Cost before discount: " + costBeforeDiscount + "\n" +
+                "Final Cost after tax: " + finalCost + "\n" +
+                "\n****** Thank You! Visit Again ******\n";
+
+        System.out.println(receiptDetails);
+
+        // SAVE RECEIPT AS TEXT FILE
+        try (FileWriter writer = new FileWriter("pizzareceipt.txt")) {
+            writer.write(receiptDetails);
+            System.out.println("Receipt saved to pizzareceipt.txt");
+        } catch (IOException e) {
+            System.out.println("Error while saving the receipt: " + e.getMessage());
+        }
     }
 
     // Main method
     public static void main(String[] args) {
-
-        //FUNCTIONALITY FOR VEG OR NOVEG SELECTION
+        
+        // FUNCTIONALITY FOR PIZZA NAME SELECTION FROM OPTIONS
         System.out.println("\n****** Welcome to PIZZA shop! ******");
+        System.out.println("\nChoose your pizza name: ");
+        System.out.println("1. Margherita");
+        System.out.println("2. Pepperoni");
+        System.out.println("3. Veggie");
+        System.out.println("4. BBQ");
+
+        System.out.print("Enter the choice: ");
+        int pizzaChoice = Integer.parseInt(System.console().readLine());
+        String pizzaName = "";
+        switch (pizzaChoice) {
+            case 1:
+                pizzaName = "Margherita";
+                break;
+            case 2:
+                pizzaName = "Pepperoni";
+                break;
+            case 3:
+                pizzaName = "Veggie";
+                break;
+            case 4:
+                pizzaName = "BBQ";
+                break;
+            default:
+                System.out.println("Invalid choice, defaulting to Margherita.");
+                pizzaName = "Margherita";
+        }
+
+        // FUNCTIONALITY FOR PIZZA SIZE SELECTION FROM OPTIONS
+        System.out.println("\nChoose your pizza size: ");
+        System.out.println("1. Small");
+        System.out.println("2. Medium");
+        System.out.println("3. Large");
+
+        System.out.print("Enter the choice: ");
+        int sizeChoice = Integer.parseInt(System.console().readLine());
+        String pizzaSize = "";
+        switch (sizeChoice) {
+            case 1:
+                pizzaSize = "Small";
+                break;
+            case 2:
+                pizzaSize = "Medium";
+                break;
+            case 3:
+                pizzaSize = "Large";
+                break;
+            default:
+                System.out.println("Invalid choice, defaulting to Small.");
+                pizzaSize = "Small";
+        }
+
+        // FUNCTIONALITY FOR PIZZA QUANTITY
+        System.out.print("\nEnter the quantity: ");
+        int quantity = Integer.parseInt(System.console().readLine());
+
+        // FUNCTIONALITY FOR VEG OR NON-VEG SELECTION
         System.out.println("\nSelect the pizza type: ");
         System.out.println("1. Veg");
         System.out.println("2. Non-Veg");
@@ -87,7 +178,7 @@ public class Receipt {
             isVeg = true;
         }
 
-        //FUNCTIONALITY OF PREMIUM SELECTION
+        // FUNCTIONALITY OF PREMIUM SELECTION
         System.out.println("\nDo you want premium pizza?");
         System.out.println("1. Yes");
         System.out.println("2. No");
@@ -99,12 +190,12 @@ public class Receipt {
             isPremium = true;
         }
 
-        //CREATE OBJECT RECEIPT
-        Receipt receipt = new Receipt(isVeg, isPremium);
+        // CREATE OBJECT RECEIPT
+        Receipt receipt = new Receipt(isVeg, isPremium, pizzaName, pizzaSize, quantity);
         double cost = receipt.getCost();
         receipt.costBeforeDiscount = cost;  // STORE THE COST BEFORE ANY DISCOUNT
 
-        //FUNCTIONALITY FOR SELECTING EXTRA TOPPING
+        // FUNCTIONALITY FOR SELECTING EXTRA TOPPING
         System.out.println("\nDo you want to add extra toppings?");
         System.out.println("1. Cheese");
         System.out.println("2. Chicken");
@@ -124,7 +215,7 @@ public class Receipt {
             cost = receipt.addToppings(cost, topping);
         }
 
-        //FUNCTIONALITY FOR SELECTING DISCOUNT COUPON
+        // FUNCTIONALITY FOR SELECTING DISCOUNT COUPON
         System.out.println("\nDo you have a discount coupon?");
         System.out.println("1. Yes");
         System.out.println("2. No");
@@ -133,7 +224,7 @@ public class Receipt {
 
         if (choice == 1) {
 
-            //HASMAP FOR STORING COUPON CODES AND DISCOUNT 
+            // HASHMAP FOR STORING COUPON CODES AND DISCOUNT 
             Map<String, Double> couponCodes = new HashMap<>();
             couponCodes.put("DISCOUNT10", 0.10);
             couponCodes.put("DISCOUNT20", 0.20);
@@ -142,156 +233,18 @@ public class Receipt {
             System.out.print("Enter the discount coupon code: ");
             String couponCode = System.console().readLine().trim().toUpperCase();
 
-            //CHECKING DISCOUNT COUPON CODE IS AVAIABLE AND APPLY 
+            // CHECKING DISCOUNT COUPON CODE IS AVAILABLE AND APPLY 
             if (couponCodes.containsKey(couponCode)) {
                 double discount = couponCodes.get(couponCode);
                 cost = receipt.addDiscount(cost, discount);
                 receipt.couponCode = couponCode;  
-                System.out.println("Coupon applied! You got a " + (discount * 100) + "% discount.");
+                System.out.println("Congratulations! Coupon applied! You got a " + (discount * 100) + "% discount.");
             } else {
                 System.out.println("Invalid coupon code! No discount applied.");
             }
         }
 
-        cost = receipt.addTax(cost);
-        receipt.printReceipt(cost);  
+        cost = receipt.addTax(cost); //ADDING TAX IN TOTAL COST
+        receipt.printReceipt(cost);  //PRINT RECEIPT AS TXTFILE
     }
 }
-=======
-import java.util.HashMap;
-import java.util.Map;
-
-public class Receipt {
-
-    //CREATE VARIABLE FOR VEG OR PREMIUM
-    private boolean isVeg;
-    private boolean isPremium;
-
-    //CONSTRUCTOR 
-    public Receipt(boolean isVeg, boolean isPremium){
-        this.isVeg = isVeg; //DIFF. WITH PRIVATE VARIABLES AND PUBLIC BCOZ USE OF SAME VARIABLE
-        this.isPremium = isPremium;
-    }
-
-    //CREATE FUNCTION FOR COST
-    public double getCost(){
-        double cost = 0;
-
-        if (isVeg) {
-            cost += 250;
-        }
-        else {
-            cost += 300;
-        }
-        if (isPremium) {
-            cost += 100;
-        }
-        return cost;
-    }
-
-    //FUNCTION FOR ADD TOPING
-    public double addToppings(double cost, String toping){
-        if (toping.equals("cheese")) {
-            cost += 20;
-        }
-        else if (toping.equals("chicken")) {
-            cost += 50;
-        }
-        else if (toping.equals("onion")) {
-            cost += 15;
-        }
-        return cost;
-    }
-
-    //FUNCTION FOR ADD TAX
-    public double addTax(double cost){
-        return cost + cost * 0.05;
-    }
-
-    //FUNCTION FOR ADD DISCOUNTS
-    public double addDiscount(double cost, double discount){
-        return cost - cost * discount;
-    }
-
-    public static void main(String[] args) {
-
-        System.out.println("\n****** Welcome to PIZZA shop! ******");
-        System.out.println("\nSelect the pizza type: ");
-        System.out.println("1. Veg");
-        System.out.println("2. Non-Veg");
-
-        System.out.print("Enter the choice: ");
-        int choice = Integer.parseInt(System.console().readLine());
-        boolean isVeg = false;
-        if (choice == 1) {
-            isVeg = true;
-        }
-
-        //OPTIONS AND FUNCTIONALITY FOR PREMIUM OR NOT
-        System.out.println("\nDo you want premium pizza?");
-        System.out.println("1. Yes");
-        System.out.println("2. No");
-        System.out.print("Enter the choice: ");
-        choice = Integer.parseInt(System.console().readLine());
-        boolean isPremium = false;
-        if (choice == 1) {
-            isPremium = true;
-        }
-        Receipt receipt = new Receipt(isVeg, isPremium);
-        double cost = receipt.getCost();
-
-        //OPTIONS AND FUNCTIONALITY FOR EXTRA TOPPINGS
-        System.out.println("\nDo you want to add extra toppings?");
-        System.out.println("1. Cheese");
-        System.out.println("2. Chicken");
-        System.out.println("3. Onion");
-        System.out.println("4. No toppings");
-        System.out.print("Enter the choice: ");
-        choice = Integer.parseInt(System.console().readLine());
-        if (choice!=4) {
-            String topping = "";
-            if (choice==1) {
-                topping = "Cheese";
-            }
-            else if (choice == 2) {
-                topping = "Chicken";
-            }
-            else if (choice == 3) {
-                topping = "Onion";
-            }
-            cost = receipt.addToppings(cost, topping);
-        }
-
-        //OPTIONS AND FUNCTIONALITY FOR DISCOUNT
-        System.out.println("\nDo you have any discount coupon?");
-        System.out.println("1. Yes");
-        System.out.println("2. No");
-        System.out.print("Enter the choice: ");
-        choice = Integer.parseInt(System.console().readLine());
-            if (choice == 1) {
-                Map<String, Double> couponCodes = new HashMap<>();
-                couponCodes.put("DISCOUNT10", 0.10);
-                couponCodes.put("DISCOUNT20", 0.20);
-                couponCodes.put("DISCOUNT30", 0.30);
-
-                System.out.print("Enter the discount coupon code: ");
-                String couponCode = System.console().readLine().trim().toUpperCase();
-
-            if (couponCodes.containsKey(couponCode)) {
-                    double discount = couponCodes.get(couponCode);
-                    cost = receipt.addDiscount(cost, discount);
-                    System.out.println("\nCongratulations! Your Coupon applied! You got a " + (discount * 100) + "% discount.");
-            }
-            else {
-                System.out.println("Invalid coupon code! No discount applied.");
-            }
-        }
-
-        cost = receipt.addTax(cost);
-        System.out.println("\n****** Receipt ******");
-        System.out.println("\nTotal cost including tax is: "+cost);
-        System.out.println("\n****** Thank You! Visit Again ******\n");
-
-    }
-}
->>>>>>> 46e33feb7fdab0b7b1b99a75b134b4630d58ba87
